@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+</head>
+<body>
+    <h1>Feedback Form</h1>
+    <form id="feedbackForm">
+        <label for="bskyHandle">Bluesky Handle:</label><br>
+        <input type="text" id="bskyHandle" name="bskyHandle" required><br><br>
+        
+        <label for="feedback">Feedback Comments for the Bot:</label><br>
+        <textarea id="feedback" name="feedback" rows="4" required></textarea><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('feedbackForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the form from reloading the page
+
+            const bskyHandle = document.getElementById('bskyHandle').value;
+            const feedback = document.getElementById('feedback').value;
+
+            // Prepare the data to send to Netlify function
+            const data = {
+                bskyHandle,
+                feedback
+            };
+
+            try {
+                // Send a POST request to the Netlify function endpoint
+                const response = await fetch('/.netlify/functions/send-feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Feedback sent successfully!');
+                } else {
+                    alert('Failed to send feedback.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            }
+        });
+    </script>
+</body>
+</html>
