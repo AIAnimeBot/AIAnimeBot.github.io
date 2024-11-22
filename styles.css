@@ -1,4 +1,12 @@
 html {
-background-color: #4a4e69;
-color: #f2e9e4
+	background-color: #4a4e69;
+	color: #f2e9e4
+}
+hr {
+	border: none;
+	height: 1px;
+	background-color: #f2e9e4
+}
+a {
+	color: #c9ada7
 }
