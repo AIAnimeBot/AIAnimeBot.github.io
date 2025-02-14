@@ -1,25 +1,136 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-            charset="UTF-8"
-        />
-        <title>aianimebot.github.io</title>
-        <link rel="stylesheet" href="/styles.css" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AiAnimeBot OS v3.02</title>
+        <style>
+            body {
+                background-color: #000;
+                color: #fff;
+                font-family: monospace;
+                font-size: 24px;
+                margin: 0;
+                padding: 50px;
+                user-select: none;
+            }
+
+            .grub-header {
+                margin-bottom: 10px;
+                color: #cccccc;
+            }
+
+            .grub-menu {
+                border: 1px solid #fff;
+                padding: 10px;
+                width: fit-content;
+                margin-bottom: 20px;
+            }
+
+            .grub-option {
+                padding: 10px;
+                margin: 5px 0;
+                cursor: pointer;
+                color: #fff;
+                display: block;
+            }
+
+            .selected {
+                background-color: #fff;
+                color: #000 !important;
+            }
+
+            .timeout {
+                color: #888888;
+                font-size: 18px;
+                margin-top: 20px;
+            }
+        </style>
     </head>
     <body>
-        <p>redirecting...</p>
-    </body>
-    <script>
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
+        <div class="grub-header">AiAnimeBot OS v3.02</div>
+        <div class="grub-menu">
+            <div
+                class="grub-option selected"
+                data-index="0"
+                onclick="navigate(0)"
+            >
+                Bluesky
+            </div>
+            <div class="grub-option" data-index="1" onclick="navigate(1)">
+                Fanbox
+            </div>
+        </div>
+        <div class="timeout" id="timeout">
+            The highlighted option will be executed automatically in 5
+            seconds...
+        </div>
+
+        <script>
+            let selectedIndex = 0;
+            let timeout = 5;
+            let timer;
+            let countdownInterval;
+
+            function updateSelection() {
+                document
+                    .querySelectorAll(".grub-option")
+                    .forEach((option, index) => {
+                        option.classList.toggle(
+                            "selected",
+                            index === selectedIndex,
+                        );
+                    });
+            }
+
+            function navigate(index = null) {
+                clearTimeout(timer);
+                clearInterval(countdownInterval);
+                const target = index !== null ? index : selectedIndex;
                 window.location.href =
-                    "https://bsky.app/profile/aianimebot.github.io";
-            },
-            false,
-        );
-    </script>
+                    target === 0
+                        ? "https://bsky.app/profile/aianimebot.github.io"
+                        : "https://aianime-dev.fanbox.cc/";
+            }
+
+            // Keyboard navigation
+            document.addEventListener("keydown", (e) => {
+                clearTimeout(timer);
+                clearInterval(countdownInterval);
+                startCountdown();
+
+                if (e.key === "ArrowUp") {
+                    selectedIndex = Math.max(0, selectedIndex - 1);
+                    updateSelection();
+                } else if (e.key === "ArrowDown") {
+                    selectedIndex = Math.min(1, selectedIndex + 1);
+                    updateSelection();
+                } else if (e.key === "Enter") {
+                    navigate();
+                }
+            });
+
+            // Start initial countdown
+            function startCountdown() {
+                timeout = 5;
+                document.getElementById("timeout").textContent =
+                    `The highlighted option will be executed automatically in ${timeout} seconds...`;
+
+                countdownInterval = setInterval(() => {
+                    timeout--;
+                    if (timeout <= 0) {
+                        clearInterval(countdownInterval);
+                        navigate();
+                    } else {
+                        document.getElementById("timeout").textContent =
+                            `The highlighted option will be executed automatically in ${timeout} seconds...`;
+                    }
+                }, 1000);
+
+                timer = setTimeout(navigate, 5000);
+            }
+
+            startCountdown();
+        </script>
+    </body>
 </html>
